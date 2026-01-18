@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Weather</h1>
+            <p class="subtitle">Get current weather information</p>
+        </header>
+
+        <main class="main">
+            <div class="search-section">
+                <div class="search-container">
+                    <select id="citySelect" class="city-select">
+                        <option value="">Select a city...</option>
+                    </select>
+                    <button id="searchBtn" class="search-btn">
+                        Get Weather
+                    </button>
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Loading weather data...</p>
+            </div>
+
+            <div id="weatherCard" class="weather-card" style="display: none;">
+                <div class="weather-header">
+                    <h2 id="cityName" class="city-name"></h2>
+                    <p id="currentDate" class="current-date"></p>
+                </div>
+
+                <div class="weather-main">
+                    <div class="temperature">
+                        <span id="temp" class="temp-value">--</span>
+                        <span class="temp-unit">°C</span>
+                    </div>
+                    <div class="weather-description">
+                        <p id="description" class="description">--</p>
+                        <p class="feels-like">Feels like <span id="feelsLike">--</span>°C</p>
+                    </div>
+                </div>
+
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Humidity</span>
+                        <span id="humidity" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Wind Speed</span>
+                        <span id="windSpeed" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Pressure</span>
+                        <span id="pressure" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Visibility</span>
+                        <span id="visibility" class="detail-value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <p>Failed to load weather data. Please try again later.</p>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Data provided by <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap</a></p>
+        </footer>
+    </div>
+
+    <script src="cities.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
