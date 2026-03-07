@@ -1,21 +1,55 @@
 // OpenWeatherMap API configuration
-const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your API key from https://openweathermap.org/api
-const API_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
+const API_KEY = process.env.WEATHER_API_KEY; // Replace with your API key from https://openweathermap.org/api
+const API_BASE_URL = "https://api.openweathermap.org/data/3.0/onecall?";
+
+const addOption = (city) => {
+    return `<option value"${city}">${city.name}<option/>`;
+};
 // DOM elements
-const citySelect = document.getElementById('citySelect');
-const searchBtn = document.getElementById('searchBtn');
-const loading = document.getElementById('loading');
-const weatherCard = document.getElementById('weatherCard');
-const errorMessage = document.getElementById('errorMessage');
+const citySelect = document.getElementById("citySelect");
+// cities array from cities.js file externally linked to html for access across all scripts
+cities.forEach((city) => {
+    citySelect.insertAdjacentHTML("beforeend", addOption(city));
+});
+function API_URL() {
+    const { n, c, la, lo } = citySelect.value;
+    console.log(la + " " + n + " " + c + " " + lo);
+    return (
+        API_BASE_URL +
+        `lat=${la}&lon=${lo}&exclude=alerts&units=metric&appid=${API_KEY}`
+    );
+}
+function callToAPI() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", API_URL(), true);
+    xhr.onload = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.error(xhr.statusText);
+            }
+        }
+    };
+    xhr.onerror = (e) => {
+        console.error(xhr.statusText);
+    };
+    xhr.send(null);
+}
+const searchBtn = document.getElementById("searchBtn");
+searchBtn.addEventListener("click", callToAPI());
+const loading = document.getElementById("loading");
+const weatherCard = document.getElementById("weatherCard");
+const errorMessage = document.getElementById("errorMessage");
 
 // Weather data elements
-const cityNameEl = document.getElementById('cityName');
-const currentDateEl = document.getElementById('currentDate');
-const tempEl = document.getElementById('temp');
-const descriptionEl = document.getElementById('description');
-const feelsLikeEl = document.getElementById('feelsLike');
-const humidityEl = document.getElementById('humidity');
-const windSpeedEl = document.getElementById('windSpeed');
-const pressureEl = document.getElementById('pressure');
-const visibilityEl = document.getElementById('visibility');
+const cityNameEl = document.getElementById("cityName");
+const currentDateEl = document.getElementById("currentDate");
+const tempEl = document.getElementById("temp");
+const descriptionEl = document.getElementById("description");
+const feelsLikeEl = document.getElementById("feelsLike");
+const humidityEl = document.getElementById("humidity");
+const windSpeedEl = document.getElementById("windSpeed");
+const pressureEl = document.getElementById("pressure");
+const visibilityEl = document.getElementById("visibility");
