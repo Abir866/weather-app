@@ -1,6 +1,6 @@
 // OpenWeatherMap API configuration
 
-const API_KEY = process.env.WEATHER_API_KEY; // Replace with your API key from https://openweathermap.org/api
+const API_KEY = WEATHER_API_KEY; // Replace with your API key from https://openweathermap.org/api
 const API_BASE_URL = "https://api.openweathermap.org/data/3.0/onecall?";
 
 const addOption = (city) => {
@@ -15,28 +15,41 @@ cities.forEach((city) => {
 function API_URL() {
     const { n, c, la, lo } = citySelect.value;
     console.log(la + " " + n + " " + c + " " + lo);
-    return (
-        API_BASE_URL +
-        `lat=${la}&lon=${lo}&exclude=alerts&units=metric&appid=${API_KEY}`
-    );
+    // return (
+    //     API_BASE_URL +
+    //     `lat=${la}&lon=${lo}&exclude=alerts&units=metric&appid=${API_KEY}`
+    // );
 }
 function callToAPI() {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", API_URL(), true);
-    xhr.onload = (e) => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                console.log(xhr.responseText);
-            } else {
-                console.error(xhr.statusText);
-            }
-        }
-    };
-    xhr.onerror = (e) => {
-        console.error(xhr.statusText);
-    };
-    xhr.send(null);
+  API_URL()
+  console.log("In calltoAPI")
+    // try {
+    //     const response = await fetch(API_URL());
+    //     if (response.ok) {
+    //         const data = await response.json(); 
+    //         console.log(data);
+    //     } else {
+    //         throw new Error('Failed to fetch data');
+    //     }
+    // } catch (error) {
+    //     console.error('Error:', error); 
+    // }
 }
+
+// function callToAPI() {
+//     const xhr = new XMLHttpRequest();
+//     xhr.open("GET", API_URL(), true);
+//     xhr.onload = (e) => {
+//         if (xhr.readyState === 4) {
+//             if (xhr.status === 200) {
+//                 console.log(xhr.responseText);
+//             } else {
+//                 console.log(xhr.statusText);
+//             }
+//         }
+//     };
+//     xhr.send(null);
+// }
 const searchBtn = document.getElementById("searchBtn");
 searchBtn.addEventListener("click", callToAPI());
 const loading = document.getElementById("loading");
