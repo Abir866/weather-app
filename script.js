@@ -1,17 +1,22 @@
 // OpenWeatherMap API configuration
+;
 
 const API_KEY = WEATHER_API_KEY; // Replace with your API key from https://openweathermap.org/api
 const API_BASE_URL = "https://api.openweathermap.org/data/3.0/onecall?";
-
+// String literal containing the option elements 
 const addOption = (city) => {
     return `<option value"${city}">${city.name}<option/>`;
 };
 // DOM elements
 const citySelect = document.getElementById("citySelect");
+
 // cities array from cities.js file externally linked to html for access across all scripts
+// FOr ech element in cities array add the item to an option
 cities.forEach((city) => {
-    citySelect.insertAdjacentHTML("beforeend", addOption(city));
+  
+  citySelect.insertAdjacentHTML("beforeend", addOption(city));
 });
+// Build the API url
 function API_URL() {
     const { n, c, la, lo } = citySelect.value;
     console.log(la + " " + n + " " + c + " " + lo);
@@ -20,6 +25,7 @@ function API_URL() {
     //     `lat=${la}&lon=${lo}&exclude=alerts&units=metric&appid=${API_KEY}`
     // );
 }
+// Call back function to call the API using the API URL returned by API_URL function
 function callToAPI() {
   API_URL()
   console.log("In calltoAPI")
@@ -51,6 +57,7 @@ function callToAPI() {
 //     xhr.send(null);
 // }
 const searchBtn = document.getElementById("searchBtn");
+// Once Search Button is clicked, a callback function hadles the event of the click by making an API call
 searchBtn.addEventListener("click", callToAPI());
 const loading = document.getElementById("loading");
 const weatherCard = document.getElementById("weatherCard");
