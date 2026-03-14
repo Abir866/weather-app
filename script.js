@@ -1,64 +1,10 @@
 // OpenWeatherMap API configuration
-;
+const API_KEY = window.WEATHER_API_KEY;
+const API_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
-const API_KEY = WEATHER_API_KEY; // Replace with your API key from https://openweathermap.org/api
-const API_BASE_URL = "https://api.openweathermap.org/data/3.0/onecall?";
-// String literal containing the option elements 
-const addOption = (city) => {
-    return `<option value"${city}">${city.name}<option/>`;
-};
 // DOM elements
 const citySelect = document.getElementById("citySelect");
-
-// cities array from cities.js file externally linked to html for access across all scripts
-// FOr ech element in cities array add the item to an option
-cities.forEach((city) => {
-  
-  citySelect.insertAdjacentHTML("beforeend", addOption(city));
-});
-// Build the API url
-function API_URL() {
-    const { n, c, la, lo } = citySelect.value;
-    console.log(la + " " + n + " " + c + " " + lo);
-    // return (
-    //     API_BASE_URL +
-    //     `lat=${la}&lon=${lo}&exclude=alerts&units=metric&appid=${API_KEY}`
-    // );
-}
-// Call back function to call the API using the API URL returned by API_URL function
-function callToAPI() {
-  API_URL()
-  console.log("In calltoAPI")
-    // try {
-    //     const response = await fetch(API_URL());
-    //     if (response.ok) {
-    //         const data = await response.json(); 
-    //         console.log(data);
-    //     } else {
-    //         throw new Error('Failed to fetch data');
-    //     }
-    // } catch (error) {
-    //     console.error('Error:', error); 
-    // }
-}
-
-// function callToAPI() {
-//     const xhr = new XMLHttpRequest();
-//     xhr.open("GET", API_URL(), true);
-//     xhr.onload = (e) => {
-//         if (xhr.readyState === 4) {
-//             if (xhr.status === 200) {
-//                 console.log(xhr.responseText);
-//             } else {
-//                 console.log(xhr.statusText);
-//             }
-//         }
-//     };
-//     xhr.send(null);
-// }
 const searchBtn = document.getElementById("searchBtn");
-// Once Search Button is clicked, a callback function hadles the event of the click by making an API call
-searchBtn.addEventListener("click", callToAPI());
 const loading = document.getElementById("loading");
 const weatherCard = document.getElementById("weatherCard");
 const errorMessage = document.getElementById("errorMessage");
@@ -73,3 +19,88 @@ const humidityEl = document.getElementById("humidity");
 const windSpeedEl = document.getElementById("windSpeed");
 const pressureEl = document.getElementById("pressure");
 const visibilityEl = document.getElementById("visibility");
+
+function addOption(city, index) {
+  return `<option value="${index}">${city.name}, ${city.country}</option>`;
+}
+
+function setLoadingState(isLoading) {
+  loading.style.display = isLoading ? "block" : "none";
+  weatherCard.style.display = isLoading ? "none" : weatherCard.style.display;
+  errorMessage.style.display = "none";
+}
+
+function showError(message = "Failed to load weather data. Please try again later.") {
+  loading.style.display = "none";
+  weatherCard.style.display = "none";
+  errorMessage.style.display = "block";
+  const text = errorMessage.querySelector("p");
+  if (text) text.textContent = message;
+}
+
+function renderWeather(city, data) {
+  const now = new Date();
+  cityNameEl.textContent = `${city.name}, ${city.country}`;
+  currentDateEl.textContent = now.toLocaleString();
+  tempEl.textContent = Math.round(data.main.temp);
+  descriptionEl.textContent = data.weather?.[0]?.description ?? "--";
+  feelsLikeEl.textContent = Math.round(data.main.feels_like);
+  humidityEl.textContent = `${data.main.humidity}%`;
+  windSpeedEl.textContent = `${data.wind.speed} m/s`;
+  pressureEl.textContent = `${data.main.pressure} hPa`;
+  visibilityEl.textContent = `${Math.round((data.visibility ?? 0) / 1000)} km`;
+
+  loading.style.display = "none";
+  errorMessage.style.display = "none";
+  weatherCard.style.display = "block";
+}
+
+function buildApiUrl(city) {
+  const params = new URLSearchParams({
+    lat: String(city.lat),
+    lon: String(city.lon),
+    units: "metric",
+    appid: API_KEY,
+  });
+  return `${API_BASE_URL}?${params.toString()}`;
+}
+
+async function callToAPI() {
+  if (!API_KEY || API_KEY === "PUT_YOUR_API_KEY_HERE") {
+    showError("API key not found. Put your key in secrets.js");
+    return;
+  }
+
+  const selectedIndex = citySelect.value;
+  if (selectedIndex === "") {
+    showError("Please select a city first.");
+    return;
+  }
+
+  const city = cities[Number(selectedIndex)];
+  if (!city) {
+    showError("City not found.");
+    return;
+  }
+
+  setLoadingState(true);
+
+  try {
+    const response = await fetch(buildApiUrl(city));
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    renderWeather(city, data);
+  } catch (error) {
+    console.error("Weather API error:", error);
+    showError("Failed to load weather data. Check API key and internet.");
+  }
+}
+
+// cities array from cities.js is loaded via script tag in index.html
+cities.forEach((city, index) => {
+  citySelect.insertAdjacentHTML("beforeend", addOption(city, index));
+});
+
+searchBtn.addEventListener("click", callToAPI);
